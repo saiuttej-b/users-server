@@ -13,6 +13,9 @@ export const ENV = Object.freeze({
   AWS_S3_REGION: 'AWS_S3_REGION',
   AWS_S3_BUCKET_NAME: 'AWS_S3_BUCKET_NAME',
   AWS_S3_BUCKET_BASE_URL: 'AWS_S3_BUCKET_BASE_URL',
+
+  JWT_SECRET: 'JWT_SECRET',
+  JWT_EXPIRATION_TIME: 'JWT_EXPIRATION_TIME',
 });
 
 export const Environments = Object.freeze({

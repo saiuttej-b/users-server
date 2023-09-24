@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { DomainModule } from './domain/domain.module';
 import { MediaResourcesModule } from './media-resources/media-resources.module';
 import { ENV, Environments } from './utils/config.constants';
@@ -28,6 +29,9 @@ import { mongoConfig } from './utils/mongoose.config';
         [ENV.AWS_S3_REGION]: Joi.string().required(),
         [ENV.AWS_S3_BUCKET_NAME]: Joi.string().required(),
         [ENV.AWS_S3_BUCKET_BASE_URL]: Joi.string().required(),
+
+        [ENV.JWT_SECRET]: Joi.string().required(),
+        [ENV.JWT_EXPIRATION_TIME]: Joi.string().required(),
       }).unknown(true),
     }),
     MongooseModule.forRoot(mongoConfig().MONGO_URI, {
@@ -35,6 +39,7 @@ import { mongoConfig } from './utils/mongoose.config';
     }),
     DomainModule,
     MediaResourcesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
