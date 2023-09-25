@@ -1,12 +1,15 @@
 import { Module, Provider } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoDBMediaResourceRepository } from './mongodb-repositories/mongodb-media-resource.repository';
+import { MongoDBPermissionProfileRepository } from './mongodb-repositories/mongodb-permission-profile.repository';
 import { MongoDBUserRegistrationRequestRepository } from './mongodb-repositories/mongodb-user-registration-request.repository';
 import { MongoDBUserRepository } from './mongodb-repositories/mongodb-user.repository';
 import { MediaResourceRepository } from './repositories/media-resource.repository';
+import { PermissionProfileRepository } from './repositories/permission-profile.repository';
 import { UserRegistrationRequestRepository } from './repositories/user-registration-request.repository';
 import { UserRepository } from './repositories/user.repository';
 import { MediaResource, MediaResourceSchema } from './schemas/media-resource.schema';
+import { PermissionProfile, PermissionProfileSchema } from './schemas/permission-profile.schema';
 import {
   UserRegistrationRequest,
   UserRegistrationRequestSchema,
@@ -26,14 +29,19 @@ const repos: Provider[] = [
     provide: UserRegistrationRequestRepository,
     useClass: MongoDBUserRegistrationRequestRepository,
   },
+  {
+    provide: PermissionProfileRepository,
+    useClass: MongoDBPermissionProfileRepository,
+  },
 ];
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: MediaResource.name, schema: MediaResourceSchema },
-      { name: User.name, schema: UserSchema },
       { name: UserRegistrationRequest.name, schema: UserRegistrationRequestSchema },
+      { name: User.name, schema: UserSchema },
+      { name: PermissionProfile.name, schema: PermissionProfileSchema },
     ]),
   ],
   providers: [...repos],

@@ -11,3 +11,7 @@ export const mongoConfig = () => {
     MONGO_URI,
   };
 };
+
+export type EditOptions = {
+  updatedById?: string;
+};

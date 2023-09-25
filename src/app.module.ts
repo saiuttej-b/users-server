@@ -9,6 +9,7 @@ import { DomainModule } from './domain/domain.module';
 import { MediaResourcesModule } from './media-resources/media-resources.module';
 import { ENV, Environments } from './utils/config.constants';
 import { mongoConfig } from './utils/mongoose.config';
+import { PermissionProfilesModule } from './permission-profiles/permission-profiles.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { mongoConfig } from './utils/mongoose.config';
     DomainModule,
     MediaResourcesModule,
     AuthModule,
+    PermissionProfilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
