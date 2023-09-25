@@ -47,26 +47,48 @@ export function compareHash(value: string, hash: string) {
   return bcrypt.compare(value, hash);
 }
 
-export function validateUsername(username: string) {
+export function validateUsername(username: string, throwError = false) {
   // Check if username is null or empty
-  if (!username) return false;
+  if (!username) {
+    if (throwError) throw new BadRequestException('Username is required');
+    return false;
+  }
+
+  // Check if username is less than 3 characters
+  if (username.length < 3) {
+    if (throwError) throw new BadRequestException('Username should be at least 3 characters long');
+    return false;
+  }
 
   // Check if username is an email
-  if (isEmail(username)) return false;
+  if (isEmail(username)) {
+    if (throwError) throw new BadRequestException('Username cannot be an email');
+    return false;
+  }
 
   // Check if username contains spaces
-  if (username.includes(' ')) return false;
+  if (username.includes(' ')) {
+    if (throwError) throw new BadRequestException('Username cannot contain white-spaces');
+    return false;
+  }
 
   // Check if username starts with a number or special character
   // Username should start with a letter
-  if (!username.match(/^[a-zA-Z]/)) return false;
+  if (!username.match(/^[a-zA-Z]/)) {
+    if (throwError) throw new BadRequestException('Username should start with a letter');
+    return false;
+  }
 
   // Check if username contains special characters
   // Username should contain only letters, numbers, dashes and underscores
-  if (!username.match(/^[a-zA-Z0-9-_]+$/)) return false;
-
-  // Check if username is less than 3 characters
-  if (username.length < 3) return false;
+  if (!username.match(/^[a-zA-Z0-9-_]+$/)) {
+    if (throwError) {
+      throw new BadRequestException(
+        'Username can contain only alphanumeric characters, dashes and underscores',
+      );
+    }
+    return false;
+  }
 
   return true;
 }

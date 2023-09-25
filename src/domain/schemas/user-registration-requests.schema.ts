@@ -70,5 +70,5 @@ export class UserRegistrationRequest {
 }
 
 export const UserRegistrationRequestSchema = SchemaFactory.createForClass(UserRegistrationRequest);
-UserRegistrationRequestSchema.index({ id: 1 }, { unique: true });
+UserRegistrationRequestSchema.index({ id: -1 }, { unique: true });
 UserRegistrationRequestSchema.index({ email: 1 });

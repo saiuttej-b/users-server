@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { generateId } from 'src/utils/util-functions';
+import { generateTimestampId } from 'src/utils/util-functions';
 import { UserRegistrationRequestRepository } from '../repositories/user-registration-request.repository';
 import {
   UserRegistrationRequest,
@@ -16,15 +16,15 @@ export class MongoDBUserRegistrationRequestRepository implements UserRegistratio
   ) {}
 
   instance(data?: Partial<UserRegistrationRequest>): UserRegistrationRequest {
-    const request = new this.requestModel();
+    const request = new UserRegistrationRequest();
     if (data) Object.assign(request, data);
-    if (!request.id) request.id = generateId();
+    if (!request.id) request.id = generateTimestampId();
 
     return request;
   }
 
   async create(user: UserRegistrationRequest): Promise<UserRegistrationRequest> {
-    if (!user.id) user.id = generateId();
+    if (!user.id) user.id = generateTimestampId();
 
     const userDoc = new this.requestModel(user);
     const record = await userDoc.save();

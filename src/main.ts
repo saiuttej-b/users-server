@@ -5,6 +5,7 @@ import { json } from 'express';
 import mongoose from 'mongoose';
 import { AppModule } from './app.module';
 import { ENV, Environments } from './utils/config.constants';
+import { storeMiddleWare } from './utils/request-store/request-store';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +17,8 @@ async function bootstrap() {
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     });
   });
+
+  app.use(storeMiddleWare);
 
   app.use(json({ limit: '100mb' }));
 

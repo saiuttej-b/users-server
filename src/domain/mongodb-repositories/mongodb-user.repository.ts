@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { generateId } from 'src/utils/util-functions';
+import { generateTimestampId } from 'src/utils/util-functions';
 import { UserRepository } from '../repositories/user.repository';
 import { User, UserDocument } from '../schemas/user.schema';
 
@@ -12,13 +12,13 @@ export class MongoDBUserRepository implements UserRepository {
   instance(data?: Partial<User>): User {
     const user = new User();
     if (data) Object.assign(user, data);
-    if (!user.id) user.id = generateId();
+    if (!user.id) user.id = generateTimestampId();
 
     return user;
   }
 
   async create(user: User): Promise<User> {
-    if (!user.id) user.id = generateId();
+    if (!user.id) user.id = generateTimestampId();
 
     const userDoc = new this.userModel(user);
     const record = await userDoc.save();

@@ -16,18 +16,14 @@ export class AuthRegistrationRequestsService {
   async createRegistrationRequest(body: RegistrationRequestDto) {
     const email = await this.userRepo.findByEmail(body.email);
     if (email) {
-      throw new BadRequestException(`There is already a user with this email ${body.email}`);
+      throw new BadRequestException(`There is already a user with this email: ${body.email}`);
     }
 
-    if (!validateUsername(body.username)) {
-      throw new BadRequestException(
-        'Username must be at least 3 characters long and can contain only alphanumeric characters',
-      );
-    }
+    validateUsername(body.username, true);
 
     const username = await this.userRepo.findByUsername(body.username);
     if (username) {
-      throw new BadRequestException(`There is already a user with this username ${body.username}`);
+      throw new BadRequestException(`There is already a user with this username: ${body.username}`);
     }
 
     body.password = await hashValue(body.password);
