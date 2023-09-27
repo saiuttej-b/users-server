@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
+import { UsersGetDto } from 'src/users/dtos/users.dto';
 import { generateTimestampId } from 'src/utils/util-functions';
 import { UserRepository } from '../repositories/user.repository';
 import { MediaResource } from '../schemas/media-resource.schema';
@@ -23,6 +24,8 @@ export class MongoDBUserRepository implements UserRepository {
     if (!user.id) user.id = generateTimestampId();
 
     const userDoc = new this.userModel(user);
+    if (!userDoc.createdAt) userDoc.createdAt = new Date();
+    if (!userDoc.updatedAt) userDoc.updatedAt = new Date();
     const record = await userDoc.save();
     return this.convert(record);
   }
@@ -35,6 +38,7 @@ export class MongoDBUserRepository implements UserRepository {
 
     Object.assign(previous, user);
     if (!previous.isNew && !previous.isModified()) return this.convert(previous);
+    previous.updatedAt = new Date();
 
     const record = await previous.save();
     return this.convert(record);
@@ -82,14 +86,46 @@ export class MongoDBUserRepository implements UserRepository {
     };
   }
 
-  async findByEmail(email: string): Promise<User> {
-    const record = await this.userModel.findOne({ email: email }).exec();
+  async findByEmail(email: string, excludedId?: string): Promise<User> {
+    const record = await this.userModel
+      .findOne({ email: email, ...(excludedId ? { id: { $ne: excludedId } } : {}) })
+      .exec();
     return this.convert(record);
   }
 
-  async findByUsername(username: string): Promise<User> {
-    const record = await this.userModel.findOne({ username: username }).exec();
+  async findByUsername(username: string, excludedId?: string): Promise<User> {
+    const record = await this.userModel
+      .findOne({ username: username, ...(excludedId ? { id: { $ne: excludedId } } : {}) })
+      .exec();
     return this.convert(record);
+  }
+
+  async find(query: UsersGetDto): Promise<{ count: number; users: User[] }> {
+    const filter: FilterQuery<User> = {
+      ...(query.search
+        ? {
+            $or: [
+              { email: { $regex: query.search, $options: 'i' } },
+              { username: { $regex: query.search, $options: 'i' } },
+              ...query.search.split(' ').map((s) => ({ firstName: { $regex: s, $options: 'i' } })),
+              ...query.search.split(' ').map((s) => ({ lastName: { $regex: s, $options: 'i' } })),
+            ],
+          }
+        : {}),
+    };
+
+    const [recordCount, records] = await Promise.all([
+      query.limit || query.page ? this.userModel.countDocuments(filter).exec() : 0,
+      this.userModel.find(filter).sort({ firstName: 1, lastName: 1 }).exec(),
+    ]);
+
+    const count = recordCount || records.length;
+    const users = this.convert(records);
+
+    return {
+      count: count,
+      users: users,
+    };
   }
 
   private convert(value: UserDocument): User;

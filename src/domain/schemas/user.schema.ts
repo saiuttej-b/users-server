@@ -7,7 +7,7 @@ import { PermissionProfile, PermissionProfileSubSchema } from './permission-prof
 export const UserCName = 'users';
 export type UserDocument = HydratedDocument<User>;
 
-@Schema({ collection: UserCName, timestamps: true })
+@Schema({ collection: UserCName })
 export class User {
   @Prop({ required: true, trim: true })
   id: string;
@@ -38,6 +38,9 @@ export class User {
 
   @Prop({ default: [], set: getSetDefaultFn([]), type: [PermissionProfileSubSchema] })
   profiles: PermissionProfile[];
+
+  @Prop()
+  passwordLastChangedAt?: Date;
 
   @Prop()
   createdAt?: Date;

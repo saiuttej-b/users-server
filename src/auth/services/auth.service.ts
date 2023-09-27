@@ -2,10 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import { UserRepository } from 'src/domain/repositories/user.repository';
+import { ENV } from 'src/utils/config.constants';
 import { getUser, setUser } from 'src/utils/request-store/request-store';
 import { compareHash } from 'src/utils/util-functions';
 import { LoginUserDto } from '../dtos/user-auth.dto';
-import { ENV } from 'src/utils/config.constants';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +39,11 @@ export class AuthService {
     const user = await this.userRepo.findById(payload.id);
     if (!user) return;
 
+    if (user.passwordLastChangedAt) {
+      const tokenIssuedAt = new Date(payload.iat * 1000);
+      if (user.passwordLastChangedAt > tokenIssuedAt) return;
+    }
+
     setUser(user);
   }
 
@@ -62,6 +67,7 @@ export class AuthService {
       const payload = jwt.verify(sessionToken, JWT_SECRET);
       return {
         id: payload['id'],
+        iat: payload['iat'],
       };
     } catch (err) {}
   }

@@ -69,6 +69,16 @@ export class MongoDBPermissionProfileRepository implements PermissionProfileRepo
     return this.convert(record);
   }
 
+  async findByIds(ids: string[]): Promise<PermissionProfile[]> {
+    if (!ids.length) return [];
+
+    const records = await this.model
+      .find({ id: { $in: ids } })
+      .sort({ name: 1 })
+      .exec();
+    return this.convert(records);
+  }
+
   async find(
     query: PermissionProfileGetDto,
   ): Promise<{ count: number; permissionProfiles: PermissionProfile[] }> {

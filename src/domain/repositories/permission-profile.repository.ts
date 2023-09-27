@@ -15,6 +15,8 @@ export abstract class PermissionProfileRepository {
 
   abstract findById(id: string): Promise<PermissionProfile>;
 
+  abstract findByIds(ids: string[]): Promise<PermissionProfile[]>;
+
   abstract find(
     query: PermissionProfileGetDto,
   ): Promise<{ count: number; permissionProfiles: PermissionProfile[] }>;
