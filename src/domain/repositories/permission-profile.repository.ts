@@ -1,3 +1,4 @@
+import { PermissionProfileGetDto } from 'src/permission-profiles/dtos/permission-profiles.dto';
 import { EditOptions } from 'src/utils/mongoose.config';
 import { PermissionProfile } from '../schemas/permission-profile.schema';
 
@@ -14,5 +15,7 @@ export abstract class PermissionProfileRepository {
 
   abstract findById(id: string): Promise<PermissionProfile>;
 
-  abstract find(): Promise<{ count: number; permissionProfiles: PermissionProfile[] }>;
+  abstract find(
+    query: PermissionProfileGetDto,
+  ): Promise<{ count: number; permissionProfiles: PermissionProfile[] }>;
 }

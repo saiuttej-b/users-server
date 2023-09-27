@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { getSetDefaultFn } from 'src/utils/util-functions';
+import { User } from './user.schema';
 
 @Schema({ _id: false })
 export class Permission {
@@ -40,6 +41,10 @@ export class PermissionProfile {
 
   @Prop()
   updatedAt: Date;
+
+  createdBy?: User;
+
+  updatedBy?: User;
 }
 
 export const PermissionProfileSchema = SchemaFactory.createForClass(PermissionProfile);

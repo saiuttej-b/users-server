@@ -1,5 +1,14 @@
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsIn,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 
 export class PermissionPostDto {
   @IsNotEmpty()
@@ -29,4 +38,29 @@ export class PermissionProfilePostDto {
   @Type(() => PermissionPostDto)
   @ValidateNested({ each: true })
   permissions: PermissionPostDto[];
+}
+
+export class PermissionProfileGetDto {
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  id?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['true', 'false'])
+  isSearch?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  limit?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  page?: number;
 }

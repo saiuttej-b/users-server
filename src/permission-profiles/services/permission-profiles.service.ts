@@ -3,7 +3,11 @@ import { uniqBy } from 'lodash';
 import { PermissionProfileRepository } from 'src/domain/repositories/permission-profile.repository';
 import { AppPermissions } from 'src/domain/schemas/permission-profile.schema';
 import { getUser } from 'src/utils/request-store/request-store';
-import { PermissionPostDto, PermissionProfilePostDto } from '../dtos/permission-profiles.dto';
+import {
+  PermissionPostDto,
+  PermissionProfileGetDto,
+  PermissionProfilePostDto,
+} from '../dtos/permission-profiles.dto';
 
 @Injectable()
 export class PermissionProfilesService {
@@ -60,18 +64,6 @@ export class PermissionProfilesService {
     };
   }
 
-  async getPermissionProfile(id: string) {
-    const profile = await this.permissionProfileRepo.findById(id);
-    if (!profile) {
-      throw new NotFoundException('Permission profile not found');
-    }
-    return profile;
-  }
-
-  async getPermissionProfiles() {
-    return this.permissionProfileRepo.find();
-  }
-
   private formatPermissions(permissions: PermissionPostDto[]) {
     const uniqueValues = uniqBy(permissions, (v) => v.name);
 
@@ -88,10 +80,24 @@ export class PermissionProfilesService {
 
       for (const action of v.actions) {
         if (!p.actions[action]) {
-          throw new BadRequestException(`Action ${action} not found in permission ${v.name}`);
+          throw new BadRequestException(`Action ${action} not found for permission ${v.name}`);
         }
       }
     }
     return uniqueValues;
+  }
+
+  async getPermissionProfiles(query: PermissionProfileGetDto) {
+    return this.permissionProfileRepo.find(query);
+  }
+
+  async getPermissionProfile(id: string) {
+    const profileRes = await this.permissionProfileRepo.find({ id });
+    if (!profileRes.count) {
+      throw new NotFoundException('Permission profile not found');
+    }
+    return {
+      profile: profileRes.permissionProfiles[0],
+    };
   }
 }

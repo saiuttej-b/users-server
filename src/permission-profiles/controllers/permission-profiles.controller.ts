@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/decorators/user-auth.decorators';
-import { PermissionProfilePostDto } from '../dtos/permission-profiles.dto';
+import { PermissionProfileGetDto, PermissionProfilePostDto } from '../dtos/permission-profiles.dto';
 import { PermissionProfilesService } from '../services/permission-profiles.service';
 
 @JwtAuthGuard()
@@ -24,8 +24,8 @@ export class PermissionProfilesController {
   }
 
   @Get()
-  getAllPermissionProfiles() {
-    return this.service.getPermissionProfiles();
+  getAllPermissionProfiles(@Query() query: PermissionProfileGetDto) {
+    return this.service.getPermissionProfiles(query);
   }
 
   @Get(':id')

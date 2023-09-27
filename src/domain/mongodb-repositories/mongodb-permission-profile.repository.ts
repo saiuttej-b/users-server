@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { keyBy, uniq } from 'lodash';
 import { FilterQuery, Model } from 'mongoose';
+import { PermissionProfileGetDto } from 'src/permission-profiles/dtos/permission-profiles.dto';
 import { EditOptions } from 'src/utils/mongoose.config';
 import { generateTimestampId } from 'src/utils/util-functions';
 import { PermissionProfileRepository } from '../repositories/permission-profile.repository';
+import { UserRepository } from '../repositories/user.repository';
 import { PermissionProfile, PermissionProfileDocument } from '../schemas/permission-profile.schema';
 
 @Injectable()
 export class MongoDBPermissionProfileRepository implements PermissionProfileRepository {
   constructor(
     @InjectModel(PermissionProfile.name) private readonly model: Model<PermissionProfile>,
+    private readonly userRepo: UserRepository,
   ) {}
 
   instance(data?: Partial<PermissionProfile>): PermissionProfile {
@@ -58,17 +62,39 @@ export class MongoDBPermissionProfileRepository implements PermissionProfileRepo
     return this.convert(record);
   }
 
-  async find(): Promise<{ count: number; permissionProfiles: PermissionProfile[] }> {
-    const filters: FilterQuery<PermissionProfileDocument> = {};
+  async find(
+    query: PermissionProfileGetDto,
+  ): Promise<{ count: number; permissionProfiles: PermissionProfile[] }> {
+    const filters: FilterQuery<PermissionProfileDocument> = {
+      ...(query.search ? { name: { $regex: query.search, $options: 'i' } } : {}),
+      ...(query.id ? { id: query.id } : {}),
+    };
 
-    const [count, permissionProfiles] = await Promise.all([
-      this.model.countDocuments(filters).exec(),
-      this.model.find(filters).exec(),
+    const [recordCount, records] = await Promise.all([
+      query.limit || query.page ? this.model.countDocuments(filters).exec() : 0,
+      this.model.find(filters).sort({ name: 1 }).exec(),
     ]);
+
+    const count = recordCount || records.length;
+    const permissionProfiles = this.convert(records);
+
+    if (!query.isSearch) {
+      const userIds = permissionProfiles
+        .map((p) => [p.createdById, p.updatedById])
+        .flat()
+        .filter(Boolean);
+      const users = await this.userRepo.findByIds(uniq(userIds));
+      const userMap = keyBy(users, (v) => v.id);
+
+      permissionProfiles.forEach((p) => {
+        p.createdBy = userMap[p.createdById];
+        p.updatedBy = userMap[p.updatedById];
+      });
+    }
 
     return {
       count: count,
-      permissionProfiles: this.convert(permissionProfiles),
+      permissionProfiles: permissionProfiles,
     };
   }
 
