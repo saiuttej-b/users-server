@@ -7,9 +7,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DomainModule } from './domain/domain.module';
 import { MediaResourcesModule } from './media-resources/media-resources.module';
+import { PermissionProfilesModule } from './permission-profiles/permission-profiles.module';
+import { UsersModule } from './users/users.module';
 import { ENV, Environments } from './utils/config.constants';
 import { mongoConfig } from './utils/mongoose.config';
-import { PermissionProfilesModule } from './permission-profiles/permission-profiles.module';
 
 @Module({
   imports: [
@@ -36,12 +37,13 @@ import { PermissionProfilesModule } from './permission-profiles/permission-profi
       }).unknown(true),
     }),
     MongooseModule.forRoot(mongoConfig().MONGO_URI, {
-      autoIndex: false,
+      autoIndex: true,
     }),
     DomainModule,
     MediaResourcesModule,
     AuthModule,
     PermissionProfilesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

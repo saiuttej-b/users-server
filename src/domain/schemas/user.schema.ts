@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { getSetDefaultFn } from 'src/utils/util-functions';
 import { MediaResource, MediaResourceSubSchema } from './media-resource.schema';
+import { PermissionProfile, PermissionProfileSubSchema } from './permission-profile.schema';
 
 export const UserCName = 'users';
 export type UserDocument = HydratedDocument<User>;
@@ -33,7 +34,10 @@ export class User {
   isActive: boolean;
 
   @Prop({ type: MediaResourceSubSchema })
-  profileImage?: MediaResource;
+  profilePicture?: MediaResource;
+
+  @Prop({ default: [], set: getSetDefaultFn([]), type: [PermissionProfileSubSchema] })
+  profiles: PermissionProfile[];
 
   @Prop()
   createdAt?: Date;

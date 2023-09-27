@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { generateTimestampId } from 'src/utils/util-functions';
 import { UserRepository } from '../repositories/user.repository';
+import { MediaResource } from '../schemas/media-resource.schema';
+import { PermissionProfile } from '../schemas/permission-profile.schema';
 import { User, UserDocument } from '../schemas/user.schema';
 
 @Injectable()
@@ -36,6 +38,24 @@ export class MongoDBUserRepository implements UserRepository {
 
     const record = await previous.save();
     return this.convert(record);
+  }
+
+  async updateProfilePicture(props: { id: string; picture: MediaResource }): Promise<void> {
+    await this.userModel
+      .updateOne({ id: props.id }, { $set: { profilePicture: props.picture } })
+      .exec();
+  }
+
+  async updateProfile(profile: PermissionProfile): Promise<void> {
+    await this.userModel
+      .updateMany({ 'profiles.id': profile.id }, { $set: { 'profiles.$': profile } })
+      .exec();
+  }
+
+  async removeProfile(profileId: string): Promise<void> {
+    await this.userModel
+      .updateMany({ 'profiles.id': profileId }, { $pull: { profiles: { id: profileId } } })
+      .exec();
   }
 
   async findById(id: string): Promise<User> {

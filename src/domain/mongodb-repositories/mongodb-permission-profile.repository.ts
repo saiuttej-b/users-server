@@ -29,6 +29,9 @@ export class MongoDBPermissionProfileRepository implements PermissionProfileRepo
 
     if (options?.updatedById) profile.updatedById = options.updatedById;
 
+    if (!profile.createdAt) profile.createdAt = new Date();
+    if (!profile.updatedAt) profile.updatedAt = new Date();
+
     const record = await new this.model(profile).save();
     return this.convert(record);
   }
@@ -41,13 +44,17 @@ export class MongoDBPermissionProfileRepository implements PermissionProfileRepo
 
     Object.assign(previous, profile);
     if (options?.updatedById) profile.updatedById = options.updatedById;
+    previous.updatedAt = new Date();
 
     const record = await previous.save();
-    return this.convert(record);
+    const result = this.convert(record);
+
+    await this.userRepo.updateProfile(result);
   }
 
   async deleteById(id: string): Promise<void> {
     await this.model.deleteOne({ id }).exec();
+    await this.userRepo.removeProfile(id);
   }
 
   async findByName(props: { name: string; excludedId?: string }): Promise<PermissionProfile> {

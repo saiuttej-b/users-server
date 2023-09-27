@@ -48,9 +48,11 @@ export class PermissionProfile {
 }
 
 export const PermissionProfileSchema = SchemaFactory.createForClass(PermissionProfile);
-PermissionProfileSchema.set('timestamps', true);
 PermissionProfileSchema.index({ id: -1 }, { unique: true });
 PermissionProfileSchema.index({ name: 1 }, { unique: true });
+
+export const PermissionProfileSubSchema = SchemaFactory.createForClass(PermissionProfile);
+PermissionProfileSubSchema.index({ id: 1 });
 
 export type AppPermissionType = {
   name: string;
