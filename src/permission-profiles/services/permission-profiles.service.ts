@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { keyBy, uniqBy } from 'lodash';
 import { PermissionProfileRepository } from 'src/domain/repositories/permission-profile.repository';
-import { AppPermissions } from 'src/domain/schemas/permission-profile.schema';
+import { AppPermissions } from 'src/utils/permissions.config';
 import { getUser } from 'src/utils/request-store/request-store';
 import {
   PermissionPostDto,

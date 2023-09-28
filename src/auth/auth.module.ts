@@ -4,6 +4,7 @@ import { DomainModule } from 'src/domain/domain.module';
 import { AuthRequestsController } from './controllers/auth-requests.controller';
 import { AuthController } from './controllers/auth.controller';
 import { UserAuthGuard } from './guards/user-auth.guard';
+import { UserAuthorizationGuard } from './guards/user-authorization.guard';
 import { UserAuthMiddleware } from './middleware/user-auth.middleware';
 import { AuthRegistrationRequestsService } from './services/auth-registration-requests.service';
 import { AuthService } from './services/auth.service';
@@ -17,6 +18,10 @@ import { AuthService } from './services/auth.service';
     {
       provide: APP_GUARD,
       useClass: UserAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: UserAuthorizationGuard,
     },
   ],
 })
