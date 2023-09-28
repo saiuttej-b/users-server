@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { uniqBy } from 'lodash';
+import { keyBy, uniqBy } from 'lodash';
 import { PermissionProfileRepository } from 'src/domain/repositories/permission-profile.repository';
 import { AppPermissions } from 'src/domain/schemas/permission-profile.schema';
 import { getUser } from 'src/utils/request-store/request-store';
@@ -96,8 +96,25 @@ export class PermissionProfilesService {
     if (!profileRes.count) {
       throw new NotFoundException('Permission profile not found');
     }
+    const profile = profileRes.permissionProfiles[0];
+
+    const profilePermissionMap = keyBy(profile.permissions, (p) => p.name);
+
     return {
-      profile: profileRes.permissionProfiles[0],
+      profile: profile,
+      permissionList: AppPermissions.list.map((p) => {
+        return {
+          ...p,
+          permissions: p.permissions.map((pp) => {
+            const userPermission = profilePermissionMap[pp.key];
+            return {
+              ...pp,
+              hasPermission: !!userPermission,
+              assignedActions: userPermission?.actions || [],
+            };
+          }),
+        };
+      }),
     };
   }
 }

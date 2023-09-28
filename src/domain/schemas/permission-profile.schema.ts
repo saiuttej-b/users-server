@@ -108,10 +108,10 @@ export class AppPermissions {
   };
 
   static get object() {
-    const v: AppPermissionsType = this.permissions;
+    const permissions: AppPermissionsType = this.permissions;
 
     const values: { [key: string]: AppPermissionType } = {};
-    Object.values(v).forEach((p) => {
+    Object.values(permissions).forEach((p) => {
       const permissions = p.permissions;
 
       Object.values(permissions).forEach((pp) => {
@@ -120,5 +120,21 @@ export class AppPermissions {
     });
 
     return values;
+  }
+
+  static get list() {
+    const permissions: AppPermissionsType = this.permissions;
+    return Object.values(permissions).map((p) => {
+      return {
+        name: p.name,
+        key: p.key,
+        permissions: Object.values(p.permissions).map((pp) => {
+          return {
+            ...pp,
+            actions: undefined,
+          };
+        }),
+      };
+    });
   }
 }
