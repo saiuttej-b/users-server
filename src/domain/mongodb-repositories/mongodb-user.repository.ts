@@ -102,16 +102,16 @@ export class MongoDBUserRepository implements UserRepository {
 
   async find(query: UsersGetDto): Promise<{ count: number; users: User[] }> {
     const filter: FilterQuery<User> = {
-      ...(query.search
-        ? {
-            $or: [
-              { email: { $regex: query.search, $options: 'i' } },
-              { username: { $regex: query.search, $options: 'i' } },
-              ...query.search.split(' ').map((s) => ({ firstName: { $regex: s, $options: 'i' } })),
-              ...query.search.split(' ').map((s) => ({ lastName: { $regex: s, $options: 'i' } })),
-            ],
-          }
-        : {}),
+      $and: [
+        { id: { $exists: true } },
+        ...(query.search
+          ? [
+              {
+                $text: { $search: query.search, $caseSensitive: false },
+              },
+            ]
+          : []),
+      ],
     };
 
     const [recordCount, records] = await Promise.all([
