@@ -102,7 +102,7 @@ export class PermissionProfilesService {
 
     return {
       profile: profile,
-      permissionList: AppPermissions.list.map((p) => {
+      appPermissions: AppPermissions.list.map((p) => {
         return {
           ...p,
           permissions: p.permissions.map((pp) => {

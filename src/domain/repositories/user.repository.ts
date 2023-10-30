@@ -16,7 +16,7 @@ export abstract class UserRepository {
 
   abstract removeProfile(profileId: string): Promise<void>;
 
-  abstract findUserIdByCredentials(email: string): Promise<{ id: string; password: string }>;
+  abstract findUserIdByCredentials(loginId: string): Promise<{ id: string; password: string }>;
 
   abstract findByEmail(email: string, excludedId?: string): Promise<User>;
 

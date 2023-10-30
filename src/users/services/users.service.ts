@@ -70,4 +70,13 @@ export class UsersService {
   async findUsers(query: UsersGetDto) {
     return this.userRepo.find(query);
   }
+
+  async findUserById(id: string) {
+    const user = await this.userRepo.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
 }

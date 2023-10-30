@@ -33,6 +33,11 @@ export class UsersController {
     return this.service.updateUser(id, reqBody);
   }
 
+  @Get(':id')
+  findUserById(@Param('id') id: string) {
+    return this.service.findUserById(id);
+  }
+
   @Get()
   findUsers(@Query() query: UsersGetDto) {
     return this.service.findUsers(query);

@@ -24,6 +24,10 @@ export const PERMISSION = {
     DELETE: 'PERMISSION_PROFILE_DELETE',
     VIEW: 'PERMISSION_PROFILE_VIEW',
   },
+  USERS: {
+    EDIT: 'USERS_EDIT',
+    VIEW: 'USERS_VIEW',
+  },
 };
 
 export class AppPermissions {
@@ -53,6 +57,24 @@ export class AppPermissions {
         PERMISSION_PROFILE_VIEW: {
           name: 'View',
           key: 'PERMISSION_PROFILE_VIEW',
+          actions: {},
+          actionsArray: [],
+        },
+      },
+    },
+    USERS: {
+      name: 'Users',
+      key: 'USERS',
+      permissions: {
+        USERS_EDIT: {
+          name: 'Edit',
+          key: 'USERS_EDIT',
+          actions: {},
+          actionsArray: [],
+        },
+        USERS_VIEW: {
+          name: 'View',
+          key: 'USERS_VIEW',
           actions: {},
           actionsArray: [],
         },

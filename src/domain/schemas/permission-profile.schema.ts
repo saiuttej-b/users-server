@@ -52,4 +52,5 @@ PermissionProfileSchema.index({ id: -1 }, { unique: true });
 PermissionProfileSchema.index({ name: 1 }, { unique: true });
 
 export const PermissionProfileSubSchema = SchemaFactory.createForClass(PermissionProfile);
+PermissionProfileSubSchema.set('_id', false);
 PermissionProfileSubSchema.index({ id: 1 });

@@ -4,8 +4,8 @@ import { PERMISSION } from 'src/utils/permissions.config';
 import { PermissionProfileGetDto, PermissionProfilePostDto } from '../dtos/permission-profiles.dto';
 import { PermissionProfilesService } from '../services/permission-profiles.service';
 
-@CheckPermission(PERMISSION.PERMISSION_PROFILE.VIEW)
 @JwtAuthGuard()
+@CheckPermission(PERMISSION.PERMISSION_PROFILE.VIEW)
 @Controller('permission-profiles')
 export class PermissionProfilesController {
   constructor(private readonly service: PermissionProfilesService) {}

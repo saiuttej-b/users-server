@@ -74,9 +74,12 @@ export class MongoDBUserRepository implements UserRepository {
     return this.convert(records);
   }
 
-  async findUserIdByCredentials(email: string): Promise<{ id: string; password: string }> {
+  async findUserIdByCredentials(loginId: string): Promise<{ id: string; password: string }> {
     const record = await this.userModel
-      .findOne({ email: email.toLowerCase() }, { id: 1, password: 1, _id: 0 })
+      .findOne(
+        { $or: [{ email: loginId.toLowerCase() }, { username: loginId }] },
+        { id: 1, password: 1, _id: 0 },
+      )
       .exec();
     if (!record) return null;
 
