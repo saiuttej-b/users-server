@@ -47,6 +47,7 @@ export class AuthRegistrationRequestsService {
       success: true,
       message: 'User registered successfully',
       token: regRequest.id,
+      email: regRequest.email,
     };
   }
 
@@ -73,6 +74,7 @@ export class AuthRegistrationRequestsService {
       success: true,
       message: 'Email otp sent successfully',
       token: regRequest.id,
+      email: regRequest.email,
     };
   }
 
