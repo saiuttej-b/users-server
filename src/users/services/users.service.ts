@@ -23,6 +23,8 @@ export class UsersService {
       }
     }
 
+    if (!reqBody.userId) reqBody.userId = getUser().id;
+
     const picture = await this.mediaResourceService.userProfilePicture.uploadUserProfilePicture({
       file: file,
       typeId: reqBody.userId,
