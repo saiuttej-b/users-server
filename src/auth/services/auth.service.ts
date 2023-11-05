@@ -29,7 +29,9 @@ export class AuthService {
   }
 
   async getCurrentUser() {
-    return getUser();
+    return {
+      user: getUser(),
+    };
   }
 
   async setAccessTokenUser(accessToken: string) {

@@ -14,7 +14,7 @@ export class PermissionProfilesService {
   constructor(private readonly permissionProfileRepo: PermissionProfileRepository) {}
 
   async createPermissionProfile(reqBody: PermissionProfilePostDto) {
-    reqBody.permissions = this.formatPermissions(reqBody.permissions);
+    if (reqBody.permissions) reqBody.permissions = this.formatPermissions(reqBody.permissions);
 
     const name = await this.permissionProfileRepo.findByName({ name: reqBody.name });
     if (name) {
@@ -35,7 +35,7 @@ export class PermissionProfilesService {
       throw new NotFoundException('Permission profile not found');
     }
 
-    reqBody.permissions = this.formatPermissions(reqBody.permissions);
+    if (reqBody.permissions) reqBody.permissions = this.formatPermissions(reqBody.permissions);
 
     const name = await this.permissionProfileRepo.findByName({
       name: reqBody.name,
@@ -47,7 +47,9 @@ export class PermissionProfilesService {
       );
     }
 
-    Object.assign(profile, reqBody);
+    profile.name = reqBody.name;
+    profile.description = reqBody.description;
+    if (reqBody.permissions) profile.permissions = reqBody.permissions;
     return this.permissionProfileRepo.save(profile, { updatedById: getUser().id });
   }
 

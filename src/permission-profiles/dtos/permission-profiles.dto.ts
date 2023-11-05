@@ -33,11 +33,11 @@ export class PermissionProfilePostDto {
   @Transform(({ value }) => value?.trim())
   description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @Type(() => PermissionPostDto)
   @ValidateNested({ each: true })
-  permissions: PermissionPostDto[];
+  permissions?: PermissionPostDto[];
 }
 
 export class PermissionProfileGetDto {
