@@ -45,20 +45,29 @@ export class AppPermissions {
         PERMISSION_PROFILE_EDIT: {
           name: 'Edit',
           key: 'PERMISSION_PROFILE_EDIT',
-          actions: {},
-          actionsArray: [],
+          actions: {
+            ALL: 'ALL',
+            CREATED: 'CREATED',
+          },
+          actionsArray: ['ALL', 'CREATED'],
         },
         PERMISSION_PROFILE_DELETE: {
           name: 'Delete',
           key: 'PERMISSION_PROFILE_DELETE',
-          actions: {},
-          actionsArray: [],
+          actions: {
+            ALL: 'ALL',
+            CREATED: 'CREATED',
+          },
+          actionsArray: ['ALL', 'CREATED'],
         },
         PERMISSION_PROFILE_VIEW: {
           name: 'View',
           key: 'PERMISSION_PROFILE_VIEW',
-          actions: {},
-          actionsArray: [],
+          actions: {
+            ALL: 'ALL',
+            CREATED: 'CREATED',
+          },
+          actionsArray: ['ALL', 'CREATED'],
         },
       },
     },
@@ -75,8 +84,11 @@ export class AppPermissions {
         USERS_VIEW: {
           name: 'View',
           key: 'USERS_VIEW',
-          actions: {},
-          actionsArray: [],
+          actions: {
+            ALL: 'ALL',
+            ASSIGNED: 'ASSIGNED',
+          },
+          actionsArray: ['ALL', 'ASSIGNED'],
         },
       },
     },
