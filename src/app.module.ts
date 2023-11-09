@@ -11,6 +11,7 @@ import { PermissionProfilesModule } from './permission-profiles/permission-profi
 import { UsersModule } from './users/users.module';
 import { ENV, Environments } from './utils/config.constants';
 import { mongoConfig } from './utils/mongoose.config';
+import { NotesModule } from './notes/notes.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { mongoConfig } from './utils/mongoose.config';
     AuthModule,
     PermissionProfilesModule,
     UsersModule,
+    NotesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
