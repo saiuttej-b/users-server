@@ -5,13 +5,15 @@ import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { ChatChannelInvitationsModule } from './chat-channel-invitations/chat-channel-invitations.module';
+import { ChatChannelsModule } from './chat-channels/chat-channels.module';
 import { DomainModule } from './domain/domain.module';
 import { MediaResourcesModule } from './media-resources/media-resources.module';
+import { NotesModule } from './notes/notes.module';
 import { PermissionProfilesModule } from './permission-profiles/permission-profiles.module';
 import { UsersModule } from './users/users.module';
 import { ENV, Environments } from './utils/config.constants';
 import { mongoConfig } from './utils/mongoose.config';
-import { NotesModule } from './notes/notes.module';
 
 @Module({
   imports: [
@@ -46,6 +48,8 @@ import { NotesModule } from './notes/notes.module';
     PermissionProfilesModule,
     UsersModule,
     NotesModule,
+    ChatChannelInvitationsModule,
+    ChatChannelsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

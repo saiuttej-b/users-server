@@ -1,3 +1,5 @@
+import { HydratedDocument } from 'mongoose';
+
 export const mongoConfig = () => {
   const username = encodeURIComponent(process.env.MONGO_DB_USERNAME);
   const password = encodeURIComponent(process.env.MONGO_DB_PASSWORD);
@@ -15,3 +17,25 @@ export const mongoConfig = () => {
 export type EditOptions = {
   updatedById?: string;
 };
+
+export function convertDoc<T>(
+  fn: () => T,
+  value: HydratedDocument<T> | Array<HydratedDocument<T>>,
+): T | T[] {
+  if (!value) return;
+  if (Array.isArray(value)) return value.map((v) => convertSingleDoc(fn, v));
+
+  return convertSingleDoc(fn, value);
+}
+
+function convertSingleDoc<T>(fn: () => T, value: HydratedDocument<T>): T {
+  if (!value) return;
+
+  const invitation = fn();
+  Object.assign(invitation, value.toJSON());
+
+  delete invitation['_id'];
+  delete invitation['__v'];
+
+  return invitation;
+}
