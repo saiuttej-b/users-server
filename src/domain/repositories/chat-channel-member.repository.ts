@@ -6,12 +6,12 @@ export abstract class ChatChannelMemberRepository {
   abstract insertMany(members: ChatChannelMember[]): Promise<void>;
 
   abstract findByChannelIdAndUserId(props: {
-    channelId: string;
+    chatChannelId: string;
     userId: string;
   }): Promise<ChatChannelMember>;
 
   abstract findByChannelIdAndUserIds(props: {
-    channelId: string;
+    chatChannelId: string;
     userIds: string[];
   }): Promise<ChatChannelMember[]>;
 }

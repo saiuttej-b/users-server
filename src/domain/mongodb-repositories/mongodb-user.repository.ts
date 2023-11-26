@@ -77,7 +77,7 @@ export class MongoDBUserRepository implements UserRepository {
   async findUserIdByCredentials(loginId: string): Promise<{ id: string; password: string }> {
     const record = await this.userModel
       .findOne(
-        { $or: [{ email: loginId.toLowerCase() }, { username: loginId }] },
+        { $or: [{ email: loginId.toLowerCase() }, { username: loginId.toLowerCase() }] },
         { id: 1, password: 1, _id: 0 },
       )
       .exec();
@@ -89,16 +89,29 @@ export class MongoDBUserRepository implements UserRepository {
     };
   }
 
+  async findByCredentials(loginId: string): Promise<User> {
+    const record = await this.userModel
+      .findOne(
+        { $or: [{ email: loginId.toLowerCase() }, { username: loginId.toLowerCase() }] },
+        { _id: 0 },
+      )
+      .exec();
+    return this.convert(record);
+  }
+
   async findByEmail(email: string, excludedId?: string): Promise<User> {
     const record = await this.userModel
-      .findOne({ email: email, ...(excludedId ? { id: { $ne: excludedId } } : {}) })
+      .findOne({ email: email.toLowerCase(), ...(excludedId ? { id: { $ne: excludedId } } : {}) })
       .exec();
     return this.convert(record);
   }
 
   async findByUsername(username: string, excludedId?: string): Promise<User> {
     const record = await this.userModel
-      .findOne({ username: username, ...(excludedId ? { id: { $ne: excludedId } } : {}) })
+      .findOne({
+        username: username.toLowerCase(),
+        ...(excludedId ? { id: { $ne: excludedId } } : {}),
+      })
       .exec();
     return this.convert(record);
   }

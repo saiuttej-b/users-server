@@ -18,6 +18,8 @@ export abstract class UserRepository {
 
   abstract findUserIdByCredentials(loginId: string): Promise<{ id: string; password: string }>;
 
+  abstract findByCredentials(loginId: string): Promise<User>;
+
   abstract findByEmail(email: string, excludedId?: string): Promise<User>;
 
   abstract findByUsername(username: string, excludedId?: string): Promise<User>;

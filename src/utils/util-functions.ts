@@ -90,5 +90,12 @@ export function validateUsername(username: string, throwError = false) {
     return false;
   }
 
+  // Check if username contains any capital letters
+  // Username should contain only lowercase letters
+  if (username.match(/[A-Z]/)) {
+    if (throwError) throw new BadRequestException('Username cannot contain capital letters');
+    return false;
+  }
+
   return true;
 }

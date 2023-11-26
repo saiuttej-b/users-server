@@ -5,7 +5,7 @@ export abstract class ChatChannelRepository {
 
   abstract create(chatChannel: ChatChannel): Promise<ChatChannel>;
 
-  abstract findByKey(props: { key: string; type?: string }): Promise<ChatChannel>;
+  abstract findById(props: { id: string; type?: string }): Promise<ChatChannel>;
 
-  abstract findByKeys(props: { keys: string[]; type?: string }): Promise<ChatChannel[]>;
+  abstract findByIds(props: { ids: string[]; type?: string }): Promise<ChatChannel[]>;
 }

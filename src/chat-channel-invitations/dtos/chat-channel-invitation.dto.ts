@@ -21,7 +21,7 @@ export class SendChatChannelInvitationDto {
 
   @ValidateIf((o) => o.channelType === ChatChannelType.GROUP)
   @IsString()
-  chatChannelKey: string;
+  chatChannelId: string;
 
   @IsString({ each: true })
   @ArrayNotEmpty()
@@ -51,6 +51,22 @@ export class RespondToChatChannelInvitationDto {
   message: string;
 }
 
+export class FindUserForChatChannelInvitationDto {
+  @Transform(({ value }) => value?.trim()?.toLowerCase())
+  @IsString()
+  @IsNotEmpty()
+  loginId: string;
+
+  @IsIn(Object.values(ChatChannelType))
+  @IsString()
+  @IsNotEmpty()
+  chatChannelType: string;
+
+  @IsString()
+  @ValidateIf((o) => o.channelType === ChatChannelType.GROUP)
+  chatChannelId: string;
+}
+
 export class GetChatChannelInvitationsDto {
   @IsString()
   @IsOptional()
@@ -63,11 +79,11 @@ export class GetChatChannelInvitationsDto {
   @IsIn(Object.values(ChatChannelType))
   @IsString()
   @IsOptional()
-  channelType?: string;
+  chatChannelType?: string;
 
   @IsString()
   @IsOptional()
-  chatChannelKey?: string;
+  chatChannelId?: string;
 
   @IsIn(Object.values(ChatChannelInvitationStatus), { each: true })
   @IsString({ each: true })

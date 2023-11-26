@@ -15,9 +15,6 @@ export class ChatChannel {
   @Prop({ required: true })
   id: string;
 
-  @Prop({ required: true })
-  key: string;
-
   @Prop({ required: true, enum: Object.values(ChatChannelType) })
   type: string;
 
@@ -38,13 +35,12 @@ export class ChatChannel {
 }
 
 export const ChatChannelSchema = SchemaFactory.createForClass(ChatChannel);
-ChatChannelSchema.index({ id: -1 }, { unique: true });
-ChatChannelSchema.index({ key: 1 }, { unique: true });
+ChatChannelSchema.index({ id: 1 }, { unique: true });
 
-export function getDirectChatChannelKey(userId1: string, userId2: string) {
+export function getDirectChatChannelId(userId1: string, userId2: string) {
   return [userId1, userId2].sort().join('--');
 }
 
-export function getGroupChatChannelKey() {
+export function getGroupChatChannelId() {
   return generateTimestampId();
 }

@@ -19,7 +19,7 @@ export abstract class ChatChannelInvitationRepository {
     createdById: string;
     values: {
       userId: string;
-      chatChannelKey: string;
+      chatChannelId: string;
     }[];
   }): Promise<void>;
 

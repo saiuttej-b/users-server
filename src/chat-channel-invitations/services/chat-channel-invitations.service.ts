@@ -7,9 +7,10 @@ import { ChatChannelRepository } from 'src/domain/repositories/chat-channel.repo
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { ChatChannelInvitationStatus } from 'src/domain/schemas/chat-channel-invitation.schema';
 import { ChatChannelMemberRole } from 'src/domain/schemas/chat-channel-member.schema';
-import { ChatChannelType, getDirectChatChannelKey } from 'src/domain/schemas/chat-channel.schema';
+import { ChatChannelType, getDirectChatChannelId } from 'src/domain/schemas/chat-channel.schema';
 import { getUser } from 'src/utils/request-store/request-store';
 import {
+  FindUserForChatChannelInvitationDto,
   GetChatChannelInvitationsDto,
   RespondToChatChannelInvitationDto,
   SendChatChannelInvitationDto,
@@ -37,8 +38,8 @@ export class ChatChannelInvitationsService {
     // set of validation rules for chat group invitation
     if (reqBody.channelType === ChatChannelType.GROUP) {
       // validating chat group
-      const channel = await this.chatChannelRepo.findByKey({
-        key: reqBody.chatChannelKey,
+      const channel = await this.chatChannelRepo.findById({
+        id: reqBody.chatChannelId,
         type: ChatChannelType.GROUP,
       });
       if (!channel) {
@@ -47,7 +48,7 @@ export class ChatChannelInvitationsService {
 
       // checking whether the request initiator is a member of the chat group
       const member = await this.chatChannelMemberRepo.findByChannelIdAndUserId({
-        channelId: channel.id,
+        chatChannelId: channel.id,
         userId: getUser().id,
       });
       if (!member) {
@@ -62,7 +63,7 @@ export class ChatChannelInvitationsService {
 
       // finding existing members of the chat group
       const existingMembers = await this.chatChannelMemberRepo.findByChannelIdAndUserIds({
-        channelId: channel.id,
+        chatChannelId: channel.id,
         userIds: reqBody.userIds,
       });
       const existingMemberIds = existingMembers.map((m) => m.userId);
@@ -73,8 +74,8 @@ export class ChatChannelInvitationsService {
 
     // set of validation rules for direct chat invitation
     if (reqBody.channelType === ChatChannelType.DIRECT) {
-      const existingChats = await this.chatChannelRepo.findByKeys({
-        keys: userIds.map((userId) => getDirectChatChannelKey(userId, getUser().id)),
+      const existingChats = await this.chatChannelRepo.findByIds({
+        ids: userIds.map((userId) => getDirectChatChannelId(userId, getUser().id)),
         type: ChatChannelType.DIRECT,
       });
       const existingUserIds = existingChats.map((c) => {
@@ -102,10 +103,10 @@ export class ChatChannelInvitationsService {
       createdById: getUser().id,
       values: users.map((user) => ({
         userId: user.id,
-        chatChannelKey:
+        chatChannelId:
           reqBody.channelType === ChatChannelType.GROUP
-            ? reqBody.chatChannelKey
-            : getDirectChatChannelKey(user.id, getUser().id),
+            ? reqBody.chatChannelId
+            : getDirectChatChannelId(user.id, getUser().id),
       })),
     });
 
@@ -116,10 +117,10 @@ export class ChatChannelInvitationsService {
       invitation.createdById = getUser().id;
       invitation.status = ChatChannelInvitationStatus.PENDING;
       invitation.chatChannelType = reqBody.channelType;
-      invitation.chatChannelKey =
+      invitation.chatChannelId =
         reqBody.channelType === ChatChannelType.GROUP
-          ? reqBody.chatChannelKey
-          : getDirectChatChannelKey(user.id, getUser().id);
+          ? reqBody.chatChannelId
+          : getDirectChatChannelId(user.id, getUser().id);
       invitation.message = reqBody.message;
       return invitation;
     });
@@ -155,7 +156,7 @@ export class ChatChannelInvitationsService {
         // adding user to the chat group
         await this.chatChannelsService.addGroupChatChannelMember({
           userId: invitation.userId,
-          chatChannelKey: invitation.chatChannelKey,
+          chatChannelId: invitation.chatChannelId,
         });
       }
 
@@ -184,5 +185,31 @@ export class ChatChannelInvitationsService {
   async getMyChatChannelInvitations(query: GetChatChannelInvitationsDto) {
     query.userId = getUser().id;
     return this.chatChannelInvitationRepo.find(query);
+  }
+
+  async findUserForChatChannelInvitation(query: FindUserForChatChannelInvitationDto) {
+    const user = await this.userRepo.findByCredentials(query.loginId);
+    if (!user) {
+      return {
+        userPresent: false,
+        isMember: false,
+        user: null,
+      };
+    }
+
+    if (query.chatChannelType === ChatChannelType.DIRECT) {
+      query.chatChannelId = getDirectChatChannelId(user.id, getUser().id);
+    }
+
+    const member = await this.chatChannelMemberRepo.findByChannelIdAndUserId({
+      chatChannelId: query.chatChannelId,
+      userId: user.id,
+    });
+
+    return {
+      userPresent: true,
+      isMember: !!member,
+      user: user,
+    };
   }
 }

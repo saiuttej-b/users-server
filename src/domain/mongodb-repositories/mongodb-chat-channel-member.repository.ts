@@ -32,12 +32,12 @@ export class MongoDBChatChannelMemberRepository implements ChatChannelMemberRepo
   }
 
   async findByChannelIdAndUserId(props: {
-    channelId: string;
+    chatChannelId: string;
     userId: string;
   }): Promise<ChatChannelMember> {
     const member = await this.model
       .findOne({
-        channelId: props.channelId,
+        chatChannelId: props.chatChannelId,
         userId: props.userId,
       })
       .exec();
@@ -46,14 +46,14 @@ export class MongoDBChatChannelMemberRepository implements ChatChannelMemberRepo
   }
 
   async findByChannelIdAndUserIds(props: {
-    channelId: string;
+    chatChannelId: string;
     userIds: string[];
   }): Promise<ChatChannelMember[]> {
     if (!props.userIds.length) return [];
 
     const members = await this.model
       .find({
-        channelId: props.channelId,
+        chatChannelId: props.chatChannelId,
         userId: { $in: props.userIds },
       })
       .exec();

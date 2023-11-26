@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/decorators/user-auth.decorators';
 import {
+  FindUserForChatChannelInvitationDto,
   GetChatChannelInvitationsDto,
   RespondToChatChannelInvitationDto,
   SendChatChannelInvitationDto,
@@ -25,5 +26,10 @@ export class ChatChannelInvitationsController {
   @Get('my-invitations')
   getMyChatChannelInvitations(@Query() query: GetChatChannelInvitationsDto) {
     return this.service.getMyChatChannelInvitations(query);
+  }
+
+  @Get('find-user')
+  findUserForChatChannelInvitation(@Query() query: FindUserForChatChannelInvitationDto) {
+    return this.service.findUserForChatChannelInvitation(query);
   }
 }

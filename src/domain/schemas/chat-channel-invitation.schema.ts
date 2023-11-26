@@ -34,7 +34,7 @@ export class ChatChannelInvitation {
   chatChannelType: string;
 
   @Prop({ required: true })
-  chatChannelKey: string;
+  chatChannelId: string;
 
   @Prop()
   message: string;

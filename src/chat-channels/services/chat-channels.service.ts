@@ -4,7 +4,7 @@ import { ChatChannelMemberRepository } from 'src/domain/repositories/chat-channe
 import { ChatChannelRepository } from 'src/domain/repositories/chat-channel.repository';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { ChatChannelMemberRole } from 'src/domain/schemas/chat-channel-member.schema';
-import { ChatChannelType, getDirectChatChannelKey } from 'src/domain/schemas/chat-channel.schema';
+import { ChatChannelType, getDirectChatChannelId } from 'src/domain/schemas/chat-channel.schema';
 
 @Injectable()
 export class ChatChannelsService {
@@ -23,15 +23,15 @@ export class ChatChannelsService {
       throw new NotFoundException('Unable to find all users.');
     }
 
-    const key = getDirectChatChannelKey(userId, createdById);
-    const existingChannel = await this.chatChannelRepo.findByKey({
-      key: key,
+    const id = getDirectChatChannelId(userId, createdById);
+    const existingChannel = await this.chatChannelRepo.findById({
+      id: id,
       type: ChatChannelType.DIRECT,
     });
     if (existingChannel) return;
 
     const channel = this.chatChannelRepo.instance();
-    channel.key = key;
+    channel.id = id;
     channel.type = ChatChannelType.DIRECT;
     channel.createdById = createdById;
 
@@ -47,23 +47,27 @@ export class ChatChannelsService {
     await this.chatChannelMemberRepo.insertMany(members);
   }
 
-  async addGroupChatChannelMember(reqBody: { userId: string; chatChannelKey: string }) {
-    const { userId, chatChannelKey } = reqBody;
-    const channel = await this.chatChannelRepo.findByKey({
-      key: chatChannelKey,
+  async addGroupChatChannelMember(reqBody: { userId: string; chatChannelId: string }) {
+    const { userId, chatChannelId } = reqBody;
+
+    // validating chat group
+    const channel = await this.chatChannelRepo.findById({
+      id: chatChannelId,
       type: ChatChannelType.GROUP,
     });
     if (!channel) {
       throw new NotFoundException('Unable to find Chat group.');
     }
 
+    // validating user
     const user = await this.userRepo.findById(userId);
     if (!user) {
       throw new NotFoundException('Unable to find user.');
     }
 
+    // checking whether the request initiator is already a member of the chat group
     const existingMember = await this.chatChannelMemberRepo.findByChannelIdAndUserId({
-      channelId: channel.id,
+      chatChannelId: channel.id,
       userId: user.id,
     });
     if (existingMember) return;

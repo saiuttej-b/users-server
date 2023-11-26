@@ -63,7 +63,7 @@ export class MongoDBChatChannelInvitationRepository implements ChatChannelInvita
 
   async deleteByPreviousPendingInvitations(props: {
     createdById: string;
-    values: { userId: string; chatChannelKey: string }[];
+    values: { userId: string; chatChannelId: string }[];
   }): Promise<void> {
     if (!props.values.length) return;
 
@@ -72,7 +72,7 @@ export class MongoDBChatChannelInvitationRepository implements ChatChannelInvita
       status: ChatChannelInvitationStatus.PENDING,
       $or: props.values.map((v) => ({
         userId: v.userId,
-        chatChannelKey: v.chatChannelKey,
+        chatChannelId: v.chatChannelId,
       })),
     });
   }
@@ -91,8 +91,8 @@ export class MongoDBChatChannelInvitationRepository implements ChatChannelInvita
       $and: [
         ...(query.userId ? [{ userId: query.userId }] : []),
         ...(query.createdById ? [{ createdById: query.createdById }] : []),
-        ...(query.channelType ? [{ chatChannelType: query.channelType }] : []),
-        ...(query.chatChannelKey ? [{ chatChannelKey: query.chatChannelKey }] : []),
+        ...(query.chatChannelType ? [{ chatChannelType: query.chatChannelType }] : []),
+        ...(query.chatChannelId ? [{ chatChannelId: query.chatChannelId }] : []),
         ...(statuses.length ? [{ status: { $in: statuses } }] : []),
       ],
     };
@@ -109,12 +109,12 @@ export class MongoDBChatChannelInvitationRepository implements ChatChannelInvita
     ]);
     const total = recordCount || records.length;
 
-    // getting user ids and chat channel keys for fetching user and chat channel data
-    const [userIds, chatChannelKeys] = records.reduce<[string[], string[]]>(
+    // getting user ids and chat channel ids for fetching user and chat channel data
+    const [userIds, chatChannelIds] = records.reduce<[string[], string[]]>(
       (acc, curr) => {
         acc[0].push(curr.userId);
         acc[0].push(curr.createdById);
-        acc[1].push(curr.chatChannelKey);
+        acc[1].push(curr.chatChannelId);
         return acc;
       },
       [[], []],
@@ -124,8 +124,8 @@ export class MongoDBChatChannelInvitationRepository implements ChatChannelInvita
     const [users, chatChannels] = await Promise.all([
       this.userRepo.findByIds(uniq(userIds)).then((res) => keyBy(res, (v) => v.id)),
       this.chatChannelRepo
-        .findByKeys({ keys: uniq(chatChannelKeys) })
-        .then((res) => keyBy(res, (v) => v.key)),
+        .findByIds({ ids: uniq(chatChannelIds) })
+        .then((res) => keyBy(res, (v) => v.id)),
     ]);
 
     // converting records to ChatChannelInvitation and adding user and chat channel data
@@ -133,7 +133,7 @@ export class MongoDBChatChannelInvitationRepository implements ChatChannelInvita
       const invitation = this.convert(record);
       invitation.user = users[invitation.userId];
       invitation.createdBy = users[invitation.createdById];
-      invitation.chatChannel = chatChannels[invitation.chatChannelKey];
+      invitation.chatChannel = chatChannels[invitation.chatChannelId];
       return invitation;
     });
 

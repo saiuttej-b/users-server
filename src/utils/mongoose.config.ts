@@ -31,11 +31,23 @@ export function convertDoc<T>(
 function convertSingleDoc<T>(fn: () => T, value: HydratedDocument<T>): T {
   if (!value) return;
 
-  const invitation = fn();
-  Object.assign(invitation, value.toJSON());
+  const res = fn();
+  Object.assign(res, value.toJSON());
 
-  delete invitation['_id'];
-  delete invitation['__v'];
+  delete res['_id'];
+  delete res['__v'];
 
-  return invitation;
+  return res;
+}
+
+export function formatDoc<T>(fn: () => T, value: unknown): T {
+  if (!value) return;
+
+  const res = fn();
+  Object.assign(res, value);
+
+  delete res['_id'];
+  delete res['__v'];
+
+  return res;
 }
