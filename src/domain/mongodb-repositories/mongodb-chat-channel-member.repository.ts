@@ -31,6 +31,20 @@ export class MongoDBChatChannelMemberRepository implements ChatChannelMemberRepo
     await this.model.insertMany(members);
   }
 
+  async updateRole(props: { chatChannelId: string; userId: string; role: string }): Promise<void> {
+    await this.model
+      .updateOne(
+        {
+          chatChannelId: props.chatChannelId,
+          userId: props.userId,
+        },
+        {
+          $set: { role: props.role },
+        },
+      )
+      .exec();
+  }
+
   async findByChannelIdAndUserId(props: {
     chatChannelId: string;
     userId: string;

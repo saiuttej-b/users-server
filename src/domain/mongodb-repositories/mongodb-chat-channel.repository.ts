@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { convertDoc } from 'src/utils/mongoose.config';
+import { EditOptions, convertDoc } from 'src/utils/mongoose.config';
 import { ChatChannelRepository } from '../repositories/chat-channel.repository';
 import { ChatChannel, ChatChannelDocument } from '../schemas/chat-channel.schema';
 
@@ -18,6 +18,25 @@ export class MongoDBChatChannelRepository implements ChatChannelRepository {
 
   async create(chatChannel: ChatChannel): Promise<ChatChannel> {
     const record = await this.model.create(chatChannel);
+    return this.convert(record);
+  }
+
+  async save(chatChannel: ChatChannel, options?: EditOptions): Promise<ChatChannel> {
+    if (!chatChannel.id) {
+      throw new BadRequestException('Chat channel id is required.');
+    }
+
+    const previous = await this.model.findOne({ id: chatChannel.id }).exec();
+    if (!previous) return this.create(chatChannel);
+
+    Object.assign(previous, chatChannel);
+    if (!previous.isModified()) return chatChannel;
+
+    if (options?.updatedById) {
+      // TODO: update updatedById
+    }
+
+    const record = await previous.save();
     return this.convert(record);
   }
 

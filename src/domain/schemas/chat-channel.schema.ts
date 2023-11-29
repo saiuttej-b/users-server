@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { generateTimestampId } from 'src/utils/util-functions';
+import { MediaResource, MediaResourceSubSchema } from './media-resource.schema';
 
 export const ChatChannelType = {
   GROUP: 'GROUP',
@@ -24,14 +25,14 @@ export class ChatChannel {
   @Prop({ trim: true })
   description: string;
 
+  @Prop({ type: MediaResourceSubSchema })
+  avatar?: MediaResource;
+
   @Prop()
   createdById: string;
 
   @Prop()
   createdAt: Date;
-
-  @Prop()
-  updatedAt: Date;
 }
 
 export const ChatChannelSchema = SchemaFactory.createForClass(ChatChannel);
