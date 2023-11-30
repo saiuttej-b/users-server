@@ -2,6 +2,7 @@ import { Module, Provider } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoDBChatChannelInvitationRepository } from './mongodb-repositories/mongodb-chat-channel-invitation.repository';
 import { MongoDBChatChannelMemberRepository } from './mongodb-repositories/mongodb-chat-channel-member.repository';
+import { MongoDBChatChannelMessageRepository } from './mongodb-repositories/mongodb-chat-channel-message.repository';
 import { MongoDBChatChannelRepository } from './mongodb-repositories/mongodb-chat-channel.repository';
 import { MongoDBMediaResourceRepository } from './mongodb-repositories/mongodb-media-resource.repository';
 import { MongoDBNotesRepository } from './mongodb-repositories/mongodb-notes.repository';
@@ -10,6 +11,7 @@ import { MongoDBUserRegistrationRequestRepository } from './mongodb-repositories
 import { MongoDBUserRepository } from './mongodb-repositories/mongodb-user.repository';
 import { ChatChannelInvitationRepository } from './repositories/chat-channel-invitation.repository';
 import { ChatChannelMemberRepository } from './repositories/chat-channel-member.repository';
+import { ChatChannelMessageRepository } from './repositories/chat-channel-message.repository';
 import { ChatChannelRepository } from './repositories/chat-channel.repository';
 import { MediaResourceRepository } from './repositories/media-resource.repository';
 import { NotesRepository } from './repositories/notes.repository';
@@ -21,6 +23,10 @@ import {
   ChatChannelInvitationSchema,
 } from './schemas/chat-channel-invitation.schema';
 import { ChatChannelMember, ChatChannelMemberSchema } from './schemas/chat-channel-member.schema';
+import {
+  ChatChannelMessage,
+  ChatChannelMessageSchema,
+} from './schemas/chat-channel-message.schema';
 import { ChatChannel, ChatChannelSchema } from './schemas/chat-channel.schema';
 import { MediaResource, MediaResourceSchema } from './schemas/media-resource.schema';
 import { Notes, NotesSchema } from './schemas/notes.schema';
@@ -66,6 +72,10 @@ const repos: Provider[] = [
     provide: ChatChannelInvitationRepository,
     useClass: MongoDBChatChannelInvitationRepository,
   },
+  {
+    provide: ChatChannelMessageRepository,
+    useClass: MongoDBChatChannelMessageRepository,
+  },
 ];
 
 @Module({
@@ -81,6 +91,7 @@ const repos: Provider[] = [
       { name: ChatChannel.name, schema: ChatChannelSchema },
       { name: ChatChannelMember.name, schema: ChatChannelMemberSchema },
       { name: ChatChannelInvitation.name, schema: ChatChannelInvitationSchema },
+      { name: ChatChannelMessage.name, schema: ChatChannelMessageSchema },
     ]),
   ],
   providers: [...repos],

@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ChatChannelInvitationsModule } from './chat-channel-invitations/chat-channel-invitations.module';
+import { ChatChannelMessagesModule } from './chat-channel-messages/chat-channel-messages.module';
 import { ChatChannelsModule } from './chat-channels/chat-channels.module';
 import { DomainModule } from './domain/domain.module';
 import { MediaResourcesModule } from './media-resources/media-resources.module';
@@ -40,7 +41,7 @@ import { mongoConfig } from './utils/mongoose.config';
       }).unknown(true),
     }),
     MongooseModule.forRoot(mongoConfig().MONGO_URI, {
-      autoIndex: false,
+      autoIndex: true,
     }),
     DomainModule,
     MediaResourcesModule,
@@ -50,6 +51,7 @@ import { mongoConfig } from './utils/mongoose.config';
     NotesModule,
     ChatChannelInvitationsModule,
     ChatChannelsModule,
+    ChatChannelMessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

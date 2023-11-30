@@ -92,6 +92,7 @@ export class MongoDBMediaResourceRepository implements MediaResourceRepository {
 
     const media = await this.mediaModel
       .find({ type: props.type, subtype: props.subtype, key: { $in: props.keys } })
+      .sort({ key: 1 })
       .exec();
     return this.convert(media);
   }
@@ -99,17 +100,17 @@ export class MongoDBMediaResourceRepository implements MediaResourceRepository {
   async findToBeDeleted(props: {
     type: string;
     subtypes?: string[];
-    typesIds?: string[];
+    typeIds?: string[];
   }): Promise<string[]> {
     if (props.subtypes && !props.subtypes.length) return [];
-    if (props.typesIds && !props.typesIds.length) return [];
+    if (props.typeIds && !props.typeIds.length) return [];
 
     const records = await this.mediaModel
       .find(
         {
           type: props.type,
           ...(props.subtypes && { subtype: { $in: props.subtypes } }),
-          ...(props.typesIds && { typeId: { $in: props.typesIds } }),
+          ...(props.typeIds && { typeId: { $in: props.typeIds } }),
         },
         { _id: 0, key: 1 },
       )

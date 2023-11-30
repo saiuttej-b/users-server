@@ -31,6 +31,6 @@ export abstract class MediaResourceRepository {
   abstract findToBeDeleted(props: {
     type: string;
     subtypes?: string[];
-    typesIds?: string[];
+    typeIds?: string[];
   }): Promise<string[]>;
 }
