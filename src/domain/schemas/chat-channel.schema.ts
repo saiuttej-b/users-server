@@ -1,7 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { convertDoc } from 'src/utils/mongoose.config';
 import { generateTimestampId } from 'src/utils/util-functions';
-import { MediaResource, MediaResourceSubSchema } from './media-resource.schema';
+import {
+  MediaResource,
+  MediaResourceSubSchema,
+  formatMediaResourceObject,
+} from './media-resource.schema';
 
 export const ChatChannelType = {
   GROUP: 'GROUP',
@@ -44,4 +49,23 @@ export function getDirectChatChannelId(userId1: string, userId2: string) {
 
 export function getGroupChatChannelId() {
   return generateTimestampId();
+}
+
+export function convertChatChannelDoc(channel: ChatChannelDocument): ChatChannel;
+export function convertChatChannelDoc(channels: ChatChannelDocument[]): ChatChannel[];
+export function convertChatChannelDoc(
+  channel: ChatChannelDocument | ChatChannelDocument[],
+): ChatChannel | ChatChannel[] {
+  return convertDoc(() => new ChatChannel(), channel);
+}
+
+export function formatChatChannelObject(value: any): ChatChannel {
+  if (!value) return value;
+
+  delete value._id;
+  delete value.__v;
+
+  value.avatar = formatMediaResourceObject(value.avatar);
+
+  return value;
 }

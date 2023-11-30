@@ -254,4 +254,8 @@ export class ChatChannelsService {
       message: 'Chat channel member role updated.',
     };
   }
+
+  async getMyChatChannels() {
+    return this.chatChannelRepo.findUserChatChannels({ userId: getUser().id });
+  }
 }

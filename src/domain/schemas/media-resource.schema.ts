@@ -61,3 +61,14 @@ MediaResourceSubSchema.set('_id', false);
 MediaResourceSubSchema.virtual('url').get(function () {
   return `${process.env.AWS_S3_BUCKET_BASE_URL}/${this.key}`;
 });
+
+export function formatMediaResourceObject(value: any): MediaResource {
+  if (!value) return value;
+
+  delete value._id;
+  delete value.__v;
+
+  value.url = `${process.env.AWS_S3_BUCKET_BASE_URL}/${value.key}`;
+
+  return value;
+}

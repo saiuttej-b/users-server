@@ -1,4 +1,13 @@
-import { Body, Controller, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/decorators/user-auth.decorators';
 import {
@@ -34,5 +43,10 @@ export class ChatChannelsController {
     @Param('id') id: string,
   ) {
     return this.service.updateChatChannelMemberRole(reqBody, id);
+  }
+
+  @Get('my-chat-channels')
+  getMyChatChannels() {
+    return this.service.getMyChatChannels();
   }
 }

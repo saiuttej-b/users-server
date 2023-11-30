@@ -6,8 +6,8 @@ import { ChatChannelMemberRole } from 'src/domain/schemas/chat-channel-member.sc
 import { MediaResourcesService } from 'src/media-resources/services/media-resources.service';
 import { getUser } from 'src/utils/request-store/request-store';
 import {
-  ChatChannelMessageCreateDto,
   ChatChannelMessageUpdateDto,
+  SendChatChannelMessageDto,
 } from '../dtos/chat-channel-messages.dto';
 
 @Injectable()
@@ -27,12 +27,12 @@ export class ChatChannelMessagesService {
   }
 
   private checkMessageBody(reqBody: { message?: string; resourceKeys?: string[] }) {
-    if (!reqBody.message && !reqBody.resourceKeys) {
-      throw new BadRequestException('Message or resourceKeys must be provided');
+    if (!reqBody.message && !reqBody.resourceKeys?.length) {
+      throw new BadRequestException('Message or Resources must be provided');
     }
   }
 
-  async createChatChannelMessage(reqBody: ChatChannelMessageCreateDto) {
+  async sendChatChannelMessage(reqBody: SendChatChannelMessageDto) {
     this.checkMessageBody(reqBody);
 
     const channel = await this.chatChannelRepo.findById({ id: reqBody.chatChannelId });
@@ -59,11 +59,11 @@ export class ChatChannelMessagesService {
     message.message = reqBody.message;
 
     message.resources = await this.mediaResourcesService.chatChannelMessage.updateResourceFiles({
-      keys: reqBody.resourceKeys,
+      keys: reqBody.resourceKeys ?? [],
       typeId: message.id,
     });
 
-    return await this.chatChannelMessageRepo.save(message);
+    return await this.chatChannelMessageRepo.create(message);
   }
 
   async updateChatChannelMessage(reqBody: ChatChannelMessageUpdateDto) {
@@ -92,7 +92,7 @@ export class ChatChannelMessagesService {
 
     message.message = reqBody.message;
     message.resources = await this.mediaResourcesService.chatChannelMessage.updateResourceFiles({
-      keys: reqBody.resourceKeys,
+      keys: reqBody.resourceKeys ?? [],
       typeId: message.id,
     });
 

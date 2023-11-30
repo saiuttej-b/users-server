@@ -11,6 +11,11 @@ export function generateId() {
   return v4();
 }
 
+export function getFullName(...values: (string | undefined)[]) {
+  const currValues = values.filter((value) => value);
+  return currValues.join(' ');
+}
+
 export function generateFileName(originalFileName: string, addOriginalName = true) {
   const nameParts = originalFileName.split('.');
   if (nameParts.length < 2) {

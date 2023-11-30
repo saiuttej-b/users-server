@@ -41,7 +41,7 @@ import { mongoConfig } from './utils/mongoose.config';
       }).unknown(true),
     }),
     MongooseModule.forRoot(mongoConfig().MONGO_URI, {
-      autoIndex: true,
+      autoIndex: false,
     }),
     DomainModule,
     MediaResourcesModule,

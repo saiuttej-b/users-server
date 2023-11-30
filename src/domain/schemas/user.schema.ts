@@ -1,7 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { getSetDefaultFn } from 'src/utils/util-functions';
-import { MediaResource, MediaResourceSubSchema } from './media-resource.schema';
+import {
+  MediaResource,
+  MediaResourceSubSchema,
+  formatMediaResourceObject,
+} from './media-resource.schema';
 import { PermissionProfile, PermissionProfileSubSchema } from './permission-profile.schema';
 
 export const UserCName = 'users';
@@ -54,3 +58,16 @@ UserSchema.index({ id: -1 }, { unique: true });
 UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ username: 1 }, { unique: true });
 UserSchema.index({ firstName: 'text', lastName: 'text', email: 'text', username: 'text' });
+
+export function formatUserObject(value: any): User {
+  if (!value) return;
+
+  delete value.password;
+  delete value.passwordLastChangedAt;
+  delete value._id;
+  delete value.__v;
+
+  value.profilePicture = formatMediaResourceObject(value.profilePicture);
+
+  return value;
+}

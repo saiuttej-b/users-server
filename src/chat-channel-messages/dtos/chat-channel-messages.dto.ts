@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class ChatChannelMessageCreateDto {
+export class SendChatChannelMessageDto {
   @IsString()
   @IsNotEmpty()
   chatChannelId: string;

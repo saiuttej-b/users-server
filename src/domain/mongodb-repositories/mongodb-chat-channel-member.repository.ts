@@ -26,6 +26,7 @@ export class MongoDBChatChannelMemberRepository implements ChatChannelMemberRepo
 
     members.forEach((member) => {
       if (!member.joinedAt) member.joinedAt = new Date();
+      if (!member.lastSeenAt) member.lastSeenAt = member.joinedAt;
     });
 
     await this.model.insertMany(members);
