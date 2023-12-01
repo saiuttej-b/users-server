@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { convertDoc } from 'src/utils/mongoose.config';
 import { getSetDefaultFn } from 'src/utils/util-functions';
 import {
   MediaResource,
@@ -70,4 +71,10 @@ export function formatUserObject(value: any): User {
   value.profilePicture = formatMediaResourceObject(value.profilePicture);
 
   return value;
+}
+
+export function convertUserDoc(value: UserDocument): User;
+export function convertUserDoc(value: UserDocument[]): User[];
+export function convertUserDoc(value: UserDocument | UserDocument[]): User | User[] {
+  return convertDoc(() => new User(), value);
 }

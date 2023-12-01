@@ -28,5 +28,7 @@ export abstract class UserRepository {
 
   abstract findByIds(ids: string[]): Promise<User[]>;
 
+  abstract findMetaDetailsByIds(ids: string[]): Promise<User[]>;
+
   abstract find(query: UsersGetDto): Promise<{ count: number; users: User[] }>;
 }

@@ -7,6 +7,7 @@ import { MediaResourcesService } from 'src/media-resources/services/media-resour
 import { getUser } from 'src/utils/request-store/request-store';
 import {
   ChatChannelMessageUpdateDto,
+  GetChatChannelMessagesDto,
   SendChatChannelMessageDto,
 } from '../dtos/chat-channel-messages.dto';
 
@@ -129,5 +130,18 @@ export class ChatChannelMessagesService {
       success: true,
       message: 'Message deleted successfully',
     };
+  }
+
+  async getChatChannelMessages(query: GetChatChannelMessagesDto) {
+    // Check if user is a member of the chat channel
+    const member = await this.chatChannelMemberRepo.findByChannelIdAndUserId({
+      chatChannelId: query.chatChannelId,
+      userId: getUser().id,
+    });
+    if (!member) {
+      throw new BadRequestException('You are not a member of this chat channel');
+    }
+
+    return this.chatChannelMessageRepo.chatChannelMessages(query);
   }
 }

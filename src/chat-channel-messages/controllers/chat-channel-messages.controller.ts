@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Param, Post, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/decorators/user-auth.decorators';
 import {
   ChatChannelMessageUpdateDto,
+  GetChatChannelMessagesDto,
   SendChatChannelMessageDto,
 } from '../dtos/chat-channel-messages.dto';
 import { ChatChannelMessagesService } from '../services/chat-channel-messages.service';
@@ -29,5 +30,10 @@ export class ChatChannelMessagesController {
   @Delete(':id')
   deleteChatChannelMessage(@Param('id') id: string) {
     return this.service.deleteChatChannelMessage(id);
+  }
+
+  @Get()
+  getChatChannelMessages(@Query() query: GetChatChannelMessagesDto) {
+    return this.service.getChatChannelMessages(query);
   }
 }

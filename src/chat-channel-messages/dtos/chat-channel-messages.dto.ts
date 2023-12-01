@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class SendChatChannelMessageDto {
   @IsString()
@@ -31,4 +31,14 @@ export class ChatChannelMessageUpdateDto {
   @IsArray()
   @IsOptional()
   resourceKeys?: string[];
+}
+
+export class GetChatChannelMessagesDto {
+  @IsString()
+  @IsNotEmpty()
+  chatChannelId: string;
+
+  @IsDate()
+  @IsNotEmpty()
+  lastMessageTimestamp: Date;
 }

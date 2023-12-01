@@ -6,7 +6,7 @@ import { generateTimestampId } from 'src/utils/util-functions';
 import { UserRepository } from '../repositories/user.repository';
 import { MediaResource } from '../schemas/media-resource.schema';
 import { PermissionProfile } from '../schemas/permission-profile.schema';
-import { User, UserDocument } from '../schemas/user.schema';
+import { User, convertUserDoc } from '../schemas/user.schema';
 
 @Injectable()
 export class MongoDBUserRepository implements UserRepository {
@@ -27,7 +27,7 @@ export class MongoDBUserRepository implements UserRepository {
     if (!userDoc.createdAt) userDoc.createdAt = new Date();
     if (!userDoc.updatedAt) userDoc.updatedAt = new Date();
     const record = await userDoc.save();
-    return this.convert(record);
+    return convertUserDoc(record);
   }
 
   async save(user: User): Promise<User> {
@@ -37,11 +37,11 @@ export class MongoDBUserRepository implements UserRepository {
     if (!previous) return this.create(user);
 
     Object.assign(previous, user);
-    if (!previous.isNew && !previous.isModified()) return this.convert(previous);
+    if (!previous.isNew && !previous.isModified()) return convertUserDoc(previous);
     previous.updatedAt = new Date();
 
     const record = await previous.save();
-    return this.convert(record);
+    return convertUserDoc(record);
   }
 
   async updateProfilePicture(props: { id: string; picture: MediaResource }): Promise<void> {
@@ -64,14 +64,14 @@ export class MongoDBUserRepository implements UserRepository {
 
   async findById(id: string): Promise<User> {
     const record = await this.userModel.findOne({ id }).exec();
-    return this.convert(record);
+    return convertUserDoc(record);
   }
 
   async findByIds(ids: string[]): Promise<User[]> {
     if (!ids.length) return [];
 
     const records = await this.userModel.find({ id: { $in: ids } }).exec();
-    return this.convert(records);
+    return convertUserDoc(records);
   }
 
   async findUserIdByCredentials(loginId: string): Promise<{ id: string; password: string }> {
@@ -96,14 +96,14 @@ export class MongoDBUserRepository implements UserRepository {
         { _id: 0 },
       )
       .exec();
-    return this.convert(record);
+    return convertUserDoc(record);
   }
 
   async findByEmail(email: string, excludedId?: string): Promise<User> {
     const record = await this.userModel
       .findOne({ email: email.toLowerCase(), ...(excludedId ? { id: { $ne: excludedId } } : {}) })
       .exec();
-    return this.convert(record);
+    return convertUserDoc(record);
   }
 
   async findByUsername(username: string, excludedId?: string): Promise<User> {
@@ -113,7 +113,16 @@ export class MongoDBUserRepository implements UserRepository {
         ...(excludedId ? { id: { $ne: excludedId } } : {}),
       })
       .exec();
-    return this.convert(record);
+    return convertUserDoc(record);
+  }
+
+  async findMetaDetailsByIds(ids: string[]): Promise<User[]> {
+    if (!ids.length) return [];
+
+    const records = await this.userModel
+      .find({ id: { $in: ids } }, { profiles: 0, password: 0, _id: 0, __v: 0 })
+      .exec();
+    return convertUserDoc(records);
   }
 
   async find(query: UsersGetDto): Promise<{ count: number; users: User[] }> {
@@ -136,24 +145,11 @@ export class MongoDBUserRepository implements UserRepository {
     ]);
 
     const count = recordCount || records.length;
-    const users = this.convert(records);
+    const users = convertUserDoc(records);
 
     return {
       count: count,
       users: users,
     };
-  }
-
-  private convert(value: UserDocument): User;
-  private convert(value: UserDocument[]): User[];
-  private convert(value: UserDocument | UserDocument[]): User | User[] {
-    if (!value) return null;
-    if (Array.isArray(value)) return value.map((v) => this.convert(v));
-
-    const user = new User();
-    Object.assign(user, value.toJSON());
-
-    delete user['_id'];
-    return user;
   }
 }

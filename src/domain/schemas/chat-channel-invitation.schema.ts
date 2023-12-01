@@ -60,4 +60,11 @@ export class ChatChannelInvitation {
 
 export const ChatChannelInvitationSchema = SchemaFactory.createForClass(ChatChannelInvitation);
 ChatChannelInvitationSchema.index({ id: -1 }, { unique: true });
-ChatChannelInvitationSchema.index({ userId: 1 });
+ChatChannelInvitationSchema.index({ userId: 1, status: 1, createdAt: -1 });
+ChatChannelInvitationSchema.index({
+  createdById: 1,
+  status: 1,
+  chatChannelId: 1,
+  userId: 1,
+  createdAt: -1,
+});

@@ -42,6 +42,7 @@ export class ChatChannel {
 
 export const ChatChannelSchema = SchemaFactory.createForClass(ChatChannel);
 ChatChannelSchema.index({ id: 1 }, { unique: true });
+ChatChannelSchema.index({ id: 1, type: 1 });
 
 export function getDirectChatChannelId(userId1: string, userId2: string) {
   return [userId1, userId2].sort().join('--');
