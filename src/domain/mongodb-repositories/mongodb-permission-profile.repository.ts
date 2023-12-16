@@ -4,7 +4,7 @@ import { keyBy, uniq } from 'lodash';
 import { FilterQuery, Model } from 'mongoose';
 import { PermissionProfileGetDto } from 'src/permission-profiles/dtos/permission-profiles.dto';
 import { EditOptions } from 'src/utils/mongoose.config';
-import { generateTimestampId } from 'src/utils/util-functions';
+import { generateId } from 'src/utils/util-functions';
 import { PermissionProfileRepository } from '../repositories/permission-profile.repository';
 import { UserRepository } from '../repositories/user.repository';
 import { PermissionProfile, PermissionProfileDocument } from '../schemas/permission-profile.schema';
@@ -19,13 +19,13 @@ export class MongoDBPermissionProfileRepository implements PermissionProfileRepo
   instance(data?: Partial<PermissionProfile>): PermissionProfile {
     const profile = new PermissionProfile();
     if (data) Object.assign(profile, data);
-    if (!profile.id) profile.id = generateTimestampId();
+    if (!profile.id) profile.id = generateId();
 
     return profile;
   }
 
   async create(profile: PermissionProfile, options?: EditOptions): Promise<PermissionProfile> {
-    if (!profile.id) profile.id = generateTimestampId();
+    if (!profile.id) profile.id = generateId();
 
     if (options?.updatedById) profile.updatedById = options.updatedById;
 

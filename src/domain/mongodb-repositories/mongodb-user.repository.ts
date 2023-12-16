@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { UsersGetDto } from 'src/users/dtos/users.dto';
-import { generateTimestampId } from 'src/utils/util-functions';
+import { generateId } from 'src/utils/util-functions';
 import { UserRepository } from '../repositories/user.repository';
 import { MediaResource } from '../schemas/media-resource.schema';
 import { PermissionProfile } from '../schemas/permission-profile.schema';
@@ -15,13 +15,13 @@ export class MongoDBUserRepository implements UserRepository {
   instance(data?: Partial<User>): User {
     const user = new User();
     if (data) Object.assign(user, data);
-    if (!user.id) user.id = generateTimestampId();
+    if (!user.id) user.id = generateId();
 
     return user;
   }
 
   async create(user: User): Promise<User> {
-    if (!user.id) user.id = generateTimestampId();
+    if (!user.id) user.id = generateId();
 
     const userDoc = new this.userModel(user);
     if (!userDoc.createdAt) userDoc.createdAt = new Date();
@@ -123,6 +123,10 @@ export class MongoDBUserRepository implements UserRepository {
       .find({ id: { $in: ids } }, { profiles: 0, password: 0, _id: 0, __v: 0 })
       .exec();
     return convertUserDoc(records);
+  }
+
+  async countSuperUser(): Promise<number> {
+    return this.userModel.countDocuments({ isSuperUser: true }).exec();
   }
 
   async find(query: UsersGetDto): Promise<{ count: number; users: User[] }> {

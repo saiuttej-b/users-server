@@ -16,6 +16,8 @@ export const ENV = Object.freeze({
 
   JWT_SECRET: 'JWT_SECRET',
   JWT_EXPIRATION_TIME: 'JWT_EXPIRATION_TIME',
+
+  ADMIN_EMAIL: 'ADMIN_EMAIL',
 });
 
 export const Environments = Object.freeze({

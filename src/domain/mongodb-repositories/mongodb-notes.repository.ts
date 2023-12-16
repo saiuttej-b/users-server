@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { generateTimestampId } from 'src/utils/util-functions';
+import { generateId } from 'src/utils/util-functions';
 import { NotesRepository } from '../repositories/notes.repository';
 import { Notes, NotesDocument } from '../schemas/notes.schema';
 
@@ -12,13 +12,13 @@ export class MongoDBNotesRepository implements NotesRepository {
   instance(data?: Partial<Notes>): Notes {
     const notes = new Notes();
     if (data) Object.assign(notes, data);
-    if (!notes.id) notes.id = generateTimestampId();
+    if (!notes.id) notes.id = generateId();
 
     return notes;
   }
 
   async create(notes: Notes): Promise<Notes> {
-    if (!notes.id) notes.id = generateTimestampId();
+    if (!notes.id) notes.id = generateId();
 
     const record = await this.notesModel.create(notes);
     return this.convert(record);

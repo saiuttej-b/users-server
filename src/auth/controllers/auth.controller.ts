@@ -12,6 +12,11 @@ export class AuthController {
     return this.service.loginUser(body);
   }
 
+  @Post('create-super-user')
+  createSuperUser() {
+    return this.service.createSuperUser();
+  }
+
   @JwtAuthGuard()
   @Get('current-user')
   getCurrentUser() {

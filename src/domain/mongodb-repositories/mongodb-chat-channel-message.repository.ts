@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { keyBy } from 'lodash';
 import { FilterQuery, Model } from 'mongoose';
 import { GetChatChannelMessagesDto } from 'src/chat-channel-messages/dtos/chat-channel-messages.dto';
-import { generateTimestampId } from 'src/utils/util-functions';
+import { generateId } from 'src/utils/util-functions';
 import { ChatChannelMessageRepository } from '../repositories/chat-channel-message.repository';
 import { UserRepository } from '../repositories/user.repository';
 import {
@@ -21,7 +21,7 @@ export class MongoDBChatChannelMessageRepository implements ChatChannelMessageRe
   instance(data?: Partial<ChatChannelMessage>): ChatChannelMessage {
     const message = new ChatChannelMessage();
     if (data) Object.assign(message, data);
-    if (!message.id) message.id = generateTimestampId();
+    if (!message.id) message.id = generateId();
 
     return message;
   }

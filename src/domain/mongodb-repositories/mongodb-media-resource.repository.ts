@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MediaResource, MediaResourceDocument } from 'src/domain/schemas/media-resource.schema';
-import { generateTimestampId } from 'src/utils/util-functions';
+import { generateId } from 'src/utils/util-functions';
 import { MediaResourceRepository } from '../repositories/media-resource.repository';
 
 @Injectable()
@@ -12,13 +12,13 @@ export class MongoDBMediaResourceRepository implements MediaResourceRepository {
   instance(data?: Partial<MediaResource>): MediaResource {
     const media = new MediaResource();
     if (data) Object.assign(media, data);
-    if (!media.id) media.id = generateTimestampId();
+    if (!media.id) media.id = generateId();
 
     return media;
   }
 
   async create(media: MediaResource): Promise<MediaResource> {
-    if (!media.id) media.id = generateTimestampId();
+    if (!media.id) media.id = generateId();
 
     const mediaDoc = new this.mediaModel(media);
     const record = await mediaDoc.save();

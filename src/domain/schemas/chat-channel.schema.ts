@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { convertDoc } from 'src/utils/mongoose.config';
-import { generateTimestampId } from 'src/utils/util-functions';
+import { generateId } from 'src/utils/util-functions';
 import {
   MediaResource,
   MediaResourceSubSchema,
@@ -49,7 +49,7 @@ export function getDirectChatChannelId(userId1: string, userId2: string) {
 }
 
 export function getGroupChatChannelId() {
-  return generateTimestampId();
+  return generateId();
 }
 
 export function convertChatChannelDoc(channel: ChatChannelDocument): ChatChannel;

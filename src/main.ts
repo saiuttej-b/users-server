@@ -8,7 +8,9 @@ import { ENV, Environments } from './utils/config.constants';
 import { storeMiddleWare } from './utils/request-store/request-store';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'debug', 'verbose'],
+  });
 
   app.enableCors((req, callback) => {
     callback(null, {

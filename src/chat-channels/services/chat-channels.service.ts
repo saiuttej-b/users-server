@@ -11,7 +11,7 @@ import {
 } from 'src/domain/schemas/chat-channel.schema';
 import { MediaResourcesService } from 'src/media-resources/services/media-resources.service';
 import { getUser } from 'src/utils/request-store/request-store';
-import { generateTimestampId } from 'src/utils/util-functions';
+import { generateId } from 'src/utils/util-functions';
 import {
   GroupChatChannelPostDto,
   UpdateChatChannelMemberRoleDto,
@@ -95,7 +95,7 @@ export class ChatChannelsService {
 
   async createGroupChatChannel(reqBody: GroupChatChannelPostDto) {
     const channel = this.chatChannelRepo.instance();
-    channel.id = generateTimestampId();
+    channel.id = generateId();
     channel.type = ChatChannelType.GROUP;
     channel.name = reqBody.name;
     channel.description = reqBody.description;

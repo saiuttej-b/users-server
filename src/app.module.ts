@@ -12,10 +12,10 @@ import { DomainModule } from './domain/domain.module';
 import { MediaResourcesModule } from './media-resources/media-resources.module';
 import { NotesModule } from './notes/notes.module';
 import { PermissionProfilesModule } from './permission-profiles/permission-profiles.module';
+import { SocketsModuleModule } from './sockets-module/sockets-module.module';
 import { UsersModule } from './users/users.module';
 import { ENV, Environments } from './utils/config.constants';
 import { mongoConfig } from './utils/mongoose.config';
-import { SocketsModuleModule } from './sockets-module/sockets-module.module';
 
 @Module({
   imports: [
@@ -39,6 +39,8 @@ import { SocketsModuleModule } from './sockets-module/sockets-module.module';
 
         [ENV.JWT_SECRET]: Joi.string().required(),
         [ENV.JWT_EXPIRATION_TIME]: Joi.string().required(),
+
+        [ENV.ADMIN_EMAIL]: Joi.string().lowercase().trim().email().optional(),
       }).unknown(true),
     }),
     MongooseModule.forRoot(mongoConfig().MONGO_URI, {

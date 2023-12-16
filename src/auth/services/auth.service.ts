@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { isEmail } from 'class-validator';
 import * as jwt from 'jsonwebtoken';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { ENV } from 'src/utils/config.constants';
 import { getUser, setUser } from 'src/utils/request-store/request-store';
-import { compareHash } from 'src/utils/util-functions';
+import { compareHash, hashValue } from 'src/utils/util-functions';
 import { LoginUserDto } from '../dtos/user-auth.dto';
 
 @Injectable()
@@ -13,6 +14,39 @@ export class AuthService {
     private readonly userRepo: UserRepository,
     private readonly configService: ConfigService,
   ) {}
+
+  async createSuperUser() {
+    if (!process.env.ADMIN_EMAIL) {
+      throw new BadRequestException('Admin email not set');
+    }
+    if (!isEmail(process.env.ADMIN_EMAIL)) {
+      throw new BadRequestException('Invalid admin email');
+    }
+
+    const email = process.env.ADMIN_EMAIL.toLowerCase().trim();
+
+    const superUsersCount = await this.userRepo.countSuperUser();
+    if (superUsersCount) {
+      throw new BadRequestException('Super users already exists');
+    }
+
+    let user = await this.userRepo.findByEmail(email);
+    if (!user) {
+      user = this.userRepo.instance();
+      user.username = Date.now().toString();
+      user.email = email;
+      user.firstName = email.split('@')[0].toUpperCase();
+      user.password = await hashValue(email);
+    }
+    user.isSuperUser = true;
+    user.isActive = true;
+
+    await this.userRepo.save(user);
+    return {
+      success: true,
+      message: 'Super user created successfully',
+    };
+  }
 
   async loginUser(body: LoginUserDto) {
     const user = await this.userRepo.findUserIdByCredentials(body.loginId);

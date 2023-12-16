@@ -44,7 +44,7 @@ export class User {
   @Prop({ default: [], set: getSetDefaultFn([]), type: [PermissionProfileSubSchema] })
   profiles: PermissionProfile[];
 
-  @Prop()
+  @Prop({ default: new Date() })
   passwordLastChangedAt?: Date;
 
   @Prop()

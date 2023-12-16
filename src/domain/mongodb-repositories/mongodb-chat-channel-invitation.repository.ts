@@ -4,7 +4,7 @@ import { keyBy, uniq } from 'lodash';
 import { FilterQuery, Model } from 'mongoose';
 import { GetChatChannelInvitationsDto } from 'src/chat-channel-invitations/dtos/chat-channel-invitation.dto';
 import { convertDoc } from 'src/utils/mongoose.config';
-import { generateTimestampId } from 'src/utils/util-functions';
+import { generateId } from 'src/utils/util-functions';
 import { ChatChannelInvitationRepository } from '../repositories/chat-channel-invitation.repository';
 import { ChatChannelRepository } from '../repositories/chat-channel.repository';
 import { UserRepository } from '../repositories/user.repository';
@@ -26,7 +26,7 @@ export class MongoDBChatChannelInvitationRepository implements ChatChannelInvita
   instance(data?: Partial<ChatChannelInvitation>): ChatChannelInvitation {
     const invitation = new ChatChannelInvitation();
     if (data) Object.assign(invitation, data);
-    if (!invitation.id) invitation.id = generateTimestampId();
+    if (!invitation.id) invitation.id = generateId();
 
     return invitation;
   }

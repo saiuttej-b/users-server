@@ -1,14 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { isEmail } from 'class-validator';
-import { v4 } from 'uuid';
+import { ulid } from 'ulidx';
 
-export function generateTimestampId() {
-  return `${Date.now()}-${v4()}`;
-}
-
-export function generateId() {
-  return v4();
+export function generateId(time?: number) {
+  return ulid(time);
 }
 
 export function getFullName(...values: (string | undefined)[]) {
@@ -23,9 +19,7 @@ export function generateFileName(originalFileName: string, addOriginalName = tru
   }
   const suffix = nameParts.at(-1);
 
-  const timestamp = Date.now();
-  const uuid = v4();
-  let name = `${timestamp}-${uuid}`;
+  let name = ulid();
 
   if (addOriginalName) {
     const nameWithOutExtension = nameParts.slice(0, nameParts.length - 1).join('.');
