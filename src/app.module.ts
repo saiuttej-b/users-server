@@ -15,6 +15,7 @@ import { PermissionProfilesModule } from './permission-profiles/permission-profi
 import { UsersModule } from './users/users.module';
 import { ENV, Environments } from './utils/config.constants';
 import { mongoConfig } from './utils/mongoose.config';
+import { SocketsModuleModule } from './sockets-module/sockets-module.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { mongoConfig } from './utils/mongoose.config';
     ChatChannelInvitationsModule,
     ChatChannelsModule,
     ChatChannelMessagesModule,
+    SocketsModuleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
