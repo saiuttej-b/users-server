@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { random } from 'lodash';
 import { UserRegistrationRequestRepository } from 'src/domain/repositories/user-registration-request.repository';
 import { UserRepository } from 'src/domain/repositories/user.repository';
@@ -8,6 +8,8 @@ import { OtpVerifyDto, ResendOtpDto } from '../dtos/user-registration-request.dt
 
 @Injectable()
 export class AuthRegistrationRequestsService {
+  private readonly logger = new Logger(AuthRegistrationRequestsService.name);
+
   constructor(
     private readonly userRepo: UserRepository,
     private readonly authRequestRepo: UserRegistrationRequestRepository,
@@ -130,6 +132,6 @@ export class AuthRegistrationRequestsService {
 
   private async sendEmailOtp(props: { email: string; otp: string; expiresAt: Date }) {
     // TODO: Send email otp
-    console.log(props);
+    this.logger.debug(props);
   }
 }
